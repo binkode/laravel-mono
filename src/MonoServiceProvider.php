@@ -13,6 +13,8 @@ class MonoServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__.'/../config/mono.php', 'mono');
+
         // Register the service the package provides.
         $this->app->singleton('mono', fn ($app) =>
             new Mono
