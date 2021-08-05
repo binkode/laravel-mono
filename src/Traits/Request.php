@@ -58,7 +58,7 @@ trait Request
         if ($res->failed()) {
             $res->throw();
         } else {
-            return $res;
+            return $res->json();
         }
     }
 }
