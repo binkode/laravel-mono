@@ -42,7 +42,7 @@ MONO_SECRET_KEY=XXXXXXXXXXXXXXXXXXXX
 
 ### Account
 ```php
-use Myckhel\Mono\Account;
+use Myckhel\Mono\Support\Account;
 
 Account::auth($id, $params);
 
@@ -69,7 +69,7 @@ Account::coverage($params);
 
 ### Cac
 ```php
-use Myckhel\Mono\Cac;
+use Myckhel\Mono\Support\Cac;
 
 Cac::lookup($params);
 
@@ -78,7 +78,7 @@ Cac::company($id, $params);
 
 ### Payment
 ```php
-use Myckhel\Mono\Payment;
+use Myckhel\Mono\Support\Payment;
 
 Payment::initiate();
 
@@ -93,6 +93,13 @@ Payment::listPlans();
 Payment::updatePlan();
 
 Payment::deletePlan();
+```
+
+### Wallet
+```php
+use Myckhel\Mono\Support\Wallet;
+
+Payment::balance($params);
 ```
 
 ### Using built in routes
