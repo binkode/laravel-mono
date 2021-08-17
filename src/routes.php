@@ -4,20 +4,35 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Myckhel\Mono\Traits\Config;
 use Myckhel\Mono\Http\Controllers\AccountController;
-use Myckhel\Mono\Http\Controllers\Controller;
+use Myckhel\Mono\Http\Controllers\PaymentController;
 
 $middleware  = Config::config('route.middleware');
-$prefix       = Config::config('route.prefix');
+$prefix      = Config::config('route.prefix');
 
 Route::group(['prefix' => $prefix, 'middleware' => $middleware], function() {
-    Route::post('account/auth',     [AccountController::class, 'auth']);
-    Route::get('accounts/{id}',     [AccountController::class, 'info']);
-    Route::get('accounts/{id}/statement',               [AccountController::class, 'statement']);
-    Route::get('accounts/{id}/statement/jobs/{jobId}',  [AccountController::class, 'pollPdf']);
-    Route::get('accounts/{id}/transactions',            [AccountController::class, 'transactions']);
-    Route::get('accounts/{id}/income',                  [AccountController::class, 'income']);
-    Route::get('accounts/{id}/identity',                [AccountController::class, 'identity']);
-    Route::post('accounts/{id}/sync',                   [AccountController::class, 'sync']);
-    Route::post('accounts/{id}/reauthorise',            [AccountController::class, 'reauthorise']);
-    Route::post('accounts/{id}/unlink',                 [AccountController::class, 'unlink']);
+    $routes = [
+        'account/auth'              => 'post,account,auth',
+        'accounts/{id}'             => 'get,account,info',
+        'accounts/{id}/statement'   => 'get,account,statement',
+        'accounts/{id}/statement/jobs/{jobId}'   => 'get,account,pollPdf',
+        'accounts/{id}/transactions'    => 'get,account,transactions',
+        'accounts/{id}/income'          => 'get,account,income',
+        'accounts/{id}/identity'        => 'get,account,identity',
+        'accounts/{id}/sync'            => 'post,account,sync',
+        'accounts/{id}/reauthorise'     => 'post,account,reauthorise',
+        'accounts/{id}/unlink'          => 'post,account,unlink',
+        'payments/initiate'             => 'post,payment,initiate',
+        'payments/verify'               => 'post,payment,verify',
+        'payments/one-time-payment'     => 'get,payment,oneTimePayment',
+    ];
+
+    $controls = [
+        'account' => AccountController::class,
+        'payment' => PaymentController::class,
+    ];
+
+    collect($routes)->map(function ($route, $endpoint) use($controls){
+        [$method, $control, $func] = explode(',', $route);
+        Route::$method($endpoint, [$controls[$control], $func]);
+    });
 });
