@@ -20,30 +20,32 @@ trait Request
         return new Props(Config::config());
     }
 
-    public static function post($endpoint, $params = []) {
-        return self::request($endpoint, $params, 'post');
+    public static function post($endpoint, $params = [], $version = null) {
+        return self::request($endpoint, $params, 'post', $version);
     }
 
-    public static function delete($endpoint, $params = []) {
-        return self::request($endpoint, $params, 'delete');
+    public static function delete($endpoint, $params = [], $version = null) {
+        return self::request($endpoint, $params, 'delete', $version);
     }
 
-    public static function put($endpoint, $params = []) {
-        return self::request($endpoint, $params, 'put');
+    public static function put($endpoint, $params = [], $version = null) {
+        return self::request($endpoint, $params, 'put', $version);
     }
 
-    public static function get($endpoint, $params = []) {
-        return self::request($endpoint, $params);
+    public static function get($endpoint, $params = [], $version = null) {
+        return self::request($endpoint, $params, 'get', $version);
     }
 
     public static function merge($ar, $arr){
         return array_merge($ar, $arr);
     }
 
-    public static function request($endpoint, $params, $method = 'get')
+    public static function request($endpoint, $params, $method = 'get', $version = null)
     {
         $cm       = self::config();
         $secret   = $cm->secret_key;
+
+        self::injectVersion($version, $endpoint);
 
         $res = Http::withHeaders([
             'mono-sec-key'  => $secret,
@@ -60,5 +62,9 @@ trait Request
         } else {
             return $res->json();
         }
+    }
+
+    static function injectVersion($version, &$endpoint) {
+        if($version) $endpoint = "/v".Config::config('version').$endpoint;
     }
 }
