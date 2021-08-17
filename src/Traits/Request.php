@@ -58,7 +58,7 @@ trait Request
         );
 
         if ($res->failed()) {
-            abort($res->status(), $res->json()['message']);
+            abort($res->status(), $res->json()['message'] ?? '');
         } else {
             return $res->json();
         }

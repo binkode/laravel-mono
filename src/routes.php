@@ -24,6 +24,8 @@ Route::group(['prefix' => $prefix, 'middleware' => $middleware], function() {
         'payments/initiate'             => 'post,payment,initiate',
         'payments/verify'               => 'post,payment,verify',
         'payments/one-time-payment'     => 'get,payment,oneTimePayment',
+        'payments/plans'                => 'post,payment,createPlan',
+        'payments/plans/{{planId}}'     => 'put,payment,updatePlan',
     ];
 
     $controls = [
@@ -35,4 +37,6 @@ Route::group(['prefix' => $prefix, 'middleware' => $middleware], function() {
         [$method, $control, $func] = explode(',', $route);
         Route::$method($endpoint, [$controls[$control], $func]);
     });
+    Route::get('payments/plans',                [$controls['payment'], 'listPlans']);
+    Route::delete('payments/plans/{{planId}}',  [$controls['payment'], 'deletePlan']);
 });
