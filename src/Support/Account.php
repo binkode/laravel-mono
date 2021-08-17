@@ -45,4 +45,8 @@ class Account {
     static function unlink(string $id, $params = []) {
         return self::post("/accounts/$id/unlink", $params);
     }
+
+    static function coverage($params = []) {
+        return self::get("/coverage", $params);
+    }
 }

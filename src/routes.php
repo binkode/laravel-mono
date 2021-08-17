@@ -21,6 +21,7 @@ Route::group(['prefix' => $prefix, 'middleware' => $middleware], function() {
         'accounts/{id}/sync'            => 'post,account,sync',
         'accounts/{id}/reauthorise'     => 'post,account,reauthorise',
         'accounts/{id}/unlink'          => 'post,account,unlink',
+        'coverage'                      => 'get,account,coverage',
         'payments/initiate'             => 'post,payment,initiate',
         'payments/verify'               => 'post,payment,verify',
         'payments/one-time-payment'     => 'get,payment,oneTimePayment',

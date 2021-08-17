@@ -113,4 +113,14 @@ class AccountController extends Controller
     {
         return Account::unlink($id, $request->all());
     }
+
+    /**
+     *
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function coverage(Request $request)
+    {
+        return Account::coverage($request->all());
+    }
 }
