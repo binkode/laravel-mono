@@ -115,7 +115,7 @@ class AccountController extends Controller
     }
 
     /**
-     *
+     * Institutions
      *
      * @return \Illuminate\Http\Response
      */

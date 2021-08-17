@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Myckhel\Mono\Traits\Config;
 use Myckhel\Mono\Http\Controllers\AccountController;
 use Myckhel\Mono\Http\Controllers\PaymentController;
+use Myckhel\Mono\Http\Controllers\CacController;
 
 $middleware  = Config::config('route.middleware');
 $prefix      = Config::config('route.prefix');
@@ -26,12 +27,15 @@ Route::group(['prefix' => $prefix, 'middleware' => $middleware], function() {
         'payments/verify'               => 'post,payment,verify',
         'payments/one-time-payment'     => 'get,payment,oneTimePayment',
         'payments/plans'                => 'post,payment,createPlan',
-        'payments/plans/{{planId}}'     => 'put,payment,updatePlan',
+        'payments/plans/{planId}'       => 'put,payment,updatePlan',
+        'cac/lookup'                    => 'get,cac,lookup',
+        'cac/company/{id}'              => 'get,cac,company',
     ];
 
     $controls = [
         'account' => AccountController::class,
         'payment' => PaymentController::class,
+        'cac'     => CacController::class,
     ];
 
     collect($routes)->map(function ($route, $endpoint) use($controls){
