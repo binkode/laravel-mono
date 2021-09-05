@@ -84,19 +84,19 @@ Cac::company($id, $params);
 ```php
 use Myckhel\Mono\Support\Payment;
 
-Payment::initiate();
+Payment::initiate($params);
 
-Payment::verify();
+Payment::verify($params);
 
-Payment::oneTimePayment();
+Payment::oneTimePayment($params);
 
-Payment::createPlan();
+Payment::createPlan($params);
 
-Payment::listPlans();
+Payment::listPlans($params);
 
-Payment::updatePlan();
+Payment::updatePlan($params);
 
-Payment::deletePlan();
+Payment::deletePlan($params);
 ```
 
 ### Wallet
@@ -105,6 +105,16 @@ use Myckhel\Mono\Support\Wallet;
 
 Payment::balance($params);
 ```
+
+## Mono
+- ### `verifyWebHook`
+Method to verify incoming webhook secret
+```php
+use Mono;
+
+Mono::verifyWebHook($request->header('mono-webhook-secret'));
+```
+
 ### Using WebHook route
 Laravel mono provides you a predefined endpoint that listens to and validates incoming mono's webhook events.
 It emits `Myckhel\Mono\Events\Hook` on every incoming hooks which could be listened to.
