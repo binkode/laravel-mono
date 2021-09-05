@@ -1,4 +1,5 @@
 # laravel-mono
+Use [Mono](https://mono.co) Apis in your laravel project.
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Travis](https://img.shields.io/travis/myckhel/laravel-mono.svg?style=flat-square)]()
@@ -32,10 +33,13 @@ return [
     ],
 ];
 ```
+
 ### Update env
 Update Your Projects `.env` with their credentials:
 ```bash
 MONO_SECRET_KEY=XXXXXXXXXXXXXXXXXXXX
+MONO_PUBLIC_KEY=XXXXXXXXXXXXXXXXXXXX
+MONO_WEBHOOK_SECRET_KEY=XXXXXXXXXXXX
 ```
 
 ## Usage
@@ -101,6 +105,97 @@ use Myckhel\Mono\Support\Wallet;
 
 Payment::balance($params);
 ```
+### Using WebHook route
+Laravel mono provides you a predefined endpoint that listens to and validates incoming mono's webhook events.
+It emits `Myckhel\Mono\Events\Hook` on every incoming hooks which could be listened to.
+
+## Setup Mono Webhook
+[Check official page for instructions setting up mono webhook](https://docs.mono.co/docs/setting-up-webhook-url)
+laravel-mono exposes `hooks` api endpoint
+use the enddpoints url to for the mono webhook url during the setup.
+```
+| POST      | /hooks                                |               | Myckhel\Mono\Http\Controllers\HookController@hook              | api            |
+```
+
+## Listening to laravel-mono Hook event
+You may start listening to incoming mono webhooks after setup by registering the event in your laravel project's `EventServiceProvider` file.
+
+- ### Create an event listener class
+```bash
+php artisan make:listener MonoWebHookListener --event=Myckhel\Mono\Events\Hook
+```
+- ### Handle mono webhook events
+```php
+<?php
+
+namespace App\Listeners;
+
+use Myckhel\Mono\Events\Hook;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
+
+class MonoWebHookListener
+{
+    /**
+     * Handle the event.
+     *
+     * @param  Myckhel\Mono\Events\Hook  $event
+     * @return void
+     */
+    public function handle(Hook $event)
+    {
+        Log::debug($event->event);
+        /* {
+            "event": "direct_debit.payment_successful",
+            "data": {
+              "type": "onetime-debit",
+              "object": {
+                "id": "txd_9AhCg0PNkwHiq6RqLLdiqKDf",
+                "status": "successful",
+                "amount": 30000,
+                "description": "free shirt",
+                "fee": 300,
+                "currency": "NGN",
+                "account": "611d575feef5d3371ca9d0d8",
+                "customer": "611adcd9a5fda23baf58140d",
+                "reference": "djdjj3939394949944",
+                "liveMode": true,
+                "created_at": "2021-08-18T18:54:23.491Z",
+                "updated_at": "2021-08-18T18:55:16.055Z"
+              }
+            }
+          }
+        */
+    }
+}
+```
+- ### Register `MonoWebHookListener`
+```php
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Event;
+
+use Myckhel\Mono\Events\Hook;
+use App\Listeners\MonoWebHookListener;
+
+class EventServiceProvider extends ServiceProvider
+{
+    /**
+     * The event listener mappings for the application.
+     *
+     * @var array
+     */
+    protected $listen = [
+        ...
+        Hook::class => [
+            MonoWebHookListener::class,
+        ],
+    ];
+```
 
 ### Using built in routes
 ```
@@ -147,6 +242,8 @@ Payment::balance($params);
 |        | DELETE    | api/v1/payments/plans/{{planId}}            |               | Myckhel\Mono\Http\Controllers\PaymentController@deletePlan     | api            |
 |        |           |                                             |               |                                                                | api.version:v1 |
 |        | POST      | api/v1/payments/verify                      |               | Myckhel\Mono\Http\Controllers\PaymentController@verify         | api            |
+|        |           |                                             |               |                                                                | api.version:v1 |
+|        | POST      | api/v1/hooks                                |               | Myckhel\Mono\Http\Controllers\HookController@hook              | api            |
 |        |           |                                             |               |                                                                | api.version:v1 |
 +--------+-----------+---------------------------------------------+---------------+----------------------------------------------------------------+----------------+
 ```
