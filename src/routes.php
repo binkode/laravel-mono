@@ -7,6 +7,7 @@ use Myckhel\Mono\Http\Controllers\AccountController;
 use Myckhel\Mono\Http\Controllers\PaymentController;
 use Myckhel\Mono\Http\Controllers\CacController;
 use Myckhel\Mono\Http\Controllers\WalletController;
+use Myckhel\Mono\Http\Controllers\HookController;
 
 $middleware  = Config::config('route.middleware');
 $prefix      = Config::config('route.prefix');
@@ -32,6 +33,7 @@ Route::group(['prefix' => $prefix, 'middleware' => $middleware], function() {
         'cac/lookup'                    => 'get,cac,lookup',
         'cac/company/{id}'              => 'get,cac,company',
         'wallet'                        => 'get,wallet,balance',
+        'hooks'                         => 'post,hook,hook',
     ];
 
     $controls = [
@@ -39,6 +41,7 @@ Route::group(['prefix' => $prefix, 'middleware' => $middleware], function() {
         'payment' => PaymentController::class,
         'cac'     => CacController::class,
         'wallet'  => WalletController::class,
+        'hook'    => HookController::class,
     ];
 
     collect($routes)->map(function ($route, $endpoint) use($controls){
