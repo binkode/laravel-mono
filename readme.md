@@ -44,7 +44,7 @@ MONO_SECRET_KEY=XXXXXXXXXXXXXXXXXXXX
 ```php
 use Myckhel\Mono\Support\Account;
 
-Account::auth($id, $params);
+Account::auth($code, $params);
 
 Account::info($id, $params);
 
